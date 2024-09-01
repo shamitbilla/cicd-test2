@@ -28,3 +28,15 @@ jobs:
 
     - name: Verify Pushed Image
       run: docker pull shamit10304/cicd-test2:latest  # Replace with your Docker Hub username and repository
+      
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker pull shamit10304/cicd-test2:latest
+          sudo docker stop cicd-test2 || true
+          sudo docker rm cicd-test2 || true
+          sudo docker run -d --name cicd-test2 -p 3001:3001 shamit10304/cicd-test2:latest
